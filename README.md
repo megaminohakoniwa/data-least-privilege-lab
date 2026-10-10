@@ -1,70 +1,74 @@
-data-least-privilege-lab
+# \# data-least-privilege-lab
 
-===
+# 
 
-\## Current Architecture
+# Experimental lab for exploring data least privilege between systems.
 
+# 
 
+# \## Current Architecture
 
-```text
+# 
 
-Client
+# ```text
 
-&#x20; |
+# Client
 
-&#x20; | POST / JSON
+# &#x20; |
 
-&#x20; v
+# &#x20; | POST / JSON
 
-Gateway :3000
+# &#x20; v
 
-&#x20; |
+# Gateway :3000
 
-&#x20; | forwards the full request body
+# &#x20; |
 
-&#x20; v
+# &#x20; | forwards the full request body
 
-OMS Mock :3001
+# &#x20; v
 
-```
+# OMS Mock :3001
 
+# ```
 
+# 
 
-\## Current Problem
+# \## Current Problem
 
+# 
 
+# The gateway currently forwards all fields unchanged.
 
-The gateway currently forwards all fields unchanged.
+# 
 
+# Example:
 
+# 
 
-Example:
+# ```json
 
+# {
 
+# &#x20; "name": "Taro",
 
-```json
+# &#x20; "address": "Fukuoka",
 
-{
+# &#x20; "sku": "ABC-123",
 
-&#x20; "name": "Taro",
+# &#x20; "quantity": 2
 
-&#x20; "address": "Fukuoka",
+# }
 
-&#x20; "sku": "ABC-123",
+# ```
 
-&#x20; "quantity": 2
+# 
 
-}
+# Even if the downstream OMS only needs `sku` and `quantity`,
 
-```
+# personal data such as `name` and `address` is still forwarded.
 
+# 
 
-
-Even if the downstream OMS only needs `sku` and `quantity`,
-
-personal data such as `name` and `address` is still forwarded.
-
-
-
-This intentionally insecure flow is the baseline for the lab.
+# This intentionally insecure flow is the baseline for the lab.he lab.
 
