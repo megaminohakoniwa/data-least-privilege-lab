@@ -14,13 +14,35 @@ const server = createServer((request, response) => {
     console.log("Gateway received:");
     console.log(body);
 
+　　
+
+　　const data = JSON.parse(body);
+　　
+　　if (!data.sku || !data.quantity) {
+  response.statusCode = 400;
+  response.setHeader("Content-Type", "application/json");
+
+  response.end(
+    JSON.stringify({
+      message: "Missing required fields",
+    })
+  );
+
+  return;
+}
+
+　　const allowedData = {
+  　sku: data.sku,
+  　quantity: data.quantity,
+　　};
+
     try {
       const omsResponse = await fetch(OMS_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: body,
+        body: JSON.stringify(allowedData),
       });
 
       const omsBody = await omsResponse.text();

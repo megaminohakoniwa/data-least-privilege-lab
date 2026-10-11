@@ -2,8 +2,9 @@ async function main() {
   const order = {
     name: "Taro",
     address: "Fukuoka",
+　　email: "taro@example.com",
     sku: "ABC-123",
-    quantity: 2,
+　　quantity: 2,
   };
 
   const response = await fetch("http://localhost:3000", {
