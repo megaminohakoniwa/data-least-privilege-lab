@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 
 const PORT = 3000;
 const OMS_URL = "http://localhost:3001";
+const CARRIER_URL = "http://localhost:3002";
 
 const server = createServer((request, response) => {
   let body = "";
@@ -17,27 +18,39 @@ const server = createServer((request, response) => {
 　　
 
 　　const data = JSON.parse(body);
-　　
-　　if (!data.sku || !data.quantity) {
+
+let targetUrl;
+let allowedData;
+
+if (data.destination === "oms") {
+  targetUrl = OMS_URL;
+
+  allowedData = {
+    sku: data.sku,
+    quantity: data.quantity,
+  };
+} else if (data.destination === "carrier") {
+  targetUrl = CARRIER_URL;
+
+  allowedData = {
+    name: data.name,
+    address: data.address,
+  };
+} else {
   response.statusCode = 400;
-  response.setHeader("Content-Type", "application/json");
 
   response.end(
     JSON.stringify({
-      message: "Missing required fields",
+      message: "Unknown destination",
     })
   );
 
   return;
 }
 
-　　const allowedData = {
-  　sku: data.sku,
-  　quantity: data.quantity,
-　　};
 
     try {
-      const omsResponse = await fetch(OMS_URL, {
+      const omsResponse = await fetch(targetUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
