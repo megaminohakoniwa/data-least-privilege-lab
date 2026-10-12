@@ -35,6 +35,7 @@ if (data.destination === "oms") {
   allowedData = {
     name: data.name,
     address: data.address,
+　　 deliveryNote: data.deliveryNote,
   };
 } else {
   response.statusCode = 400;
@@ -46,6 +47,37 @@ if (data.destination === "oms") {
   );
 
   return;
+}
+　　
+　　function containsPhone(value: unknown): boolean {
+  if (typeof value === "string") {
+    return /\d{2,4}-\d{2,4}-\d{3,4}/.test(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.some(containsPhone);
+  }
+
+  if (value !== null && typeof value === "object") {
+    return Object.values(value).some(containsPhone);
+  }
+
+  return false;
+}
+
+　　const phonePattern = /\d{2,4}-\d{2,4}-\d{3,4}/;
+
+if (containsPhone(data.deliveryNote)) {
+  response.statusCode = 400;
+
+  response.end(
+    JSON.stringify({
+      message: "PII detected in free text",
+    })
+  );
+
+  return;
+
 }
 
 

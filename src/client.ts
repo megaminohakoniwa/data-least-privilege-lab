@@ -5,7 +5,10 @@ async function main() {
 　　email: "taro@example.com",
     sku: "ABC-123",
 　　quantity: 2,
-　　destination:  "unknown",
+　　destination: "carrier",
+　　deliveryNote: {
+  text: "Please call 090-1234-5678 when you arrive"
+},
   };
 
   const response = await fetch("http://localhost:3000", {
