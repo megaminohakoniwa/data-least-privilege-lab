@@ -3,8 +3,22 @@ import { createServer } from "node:http";
 const PORT = 3000;
 const OMS_URL = "http://localhost:3001";
 const CARRIER_URL = "http://localhost:3002";
+const API_KEY = "day5-secret";
 
 const server = createServer((request, response) => {
+
+  const apiKey = request.headers["x-api-key"];
+
+if (apiKey !== API_KEY) {
+  response.statusCode = 401;
+  response.end(
+    JSON.stringify({
+      message: "Unauthorized",
+    })
+  );
+
+  return;
+}
   let body = "";
 
   request.on("data", (chunk) => {
@@ -12,8 +26,7 @@ const server = createServer((request, response) => {
   });
 
   request.on("end", async () => {
-    console.log("Gateway received:");
-    console.log(body);
+    console.log("Gateway request received");
 
 　　
 
@@ -70,6 +83,11 @@ if (data.destination === "oms") {
 if (containsPhone(data.deliveryNote)) {
   response.statusCode = 400;
 
+   console.log({
+  event: "pii_blocked",
+  destination: data.destination,
+});
+
   response.end(
     JSON.stringify({
       message: "PII detected in free text",
@@ -80,6 +98,10 @@ if (containsPhone(data.deliveryNote)) {
 
 }
 
+console.log({
+  destination: data.destination,
+  forwardedFields: Object.keys(allowedData),
+});
 
     try {
       const omsResponse = await fetch(targetUrl, {
